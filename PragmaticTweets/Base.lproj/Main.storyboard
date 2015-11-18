@@ -59,14 +59,14 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="01t-aO-Mpc">
-                                            <rect key="frame" x="86" y="8" width="90.5" height="20.5"/>
+                                            <rect key="frame" x="86" y="8" width="506" height="20.5"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="tweet text" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jnr-aX-OSI">
-                                            <rect key="frame" x="86" y="36" width="76.5" height="20.5"/>
+                                            <rect key="frame" x="86" y="36" width="506" height="20.5"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -84,11 +84,13 @@
                                     <constraints>
                                         <constraint firstItem="01t-aO-Mpc" firstAttribute="top" secondItem="X6D-eD-Sez" secondAttribute="topMargin" id="Fea-WN-WWt"/>
                                         <constraint firstItem="k5X-Od-KHu" firstAttribute="leading" secondItem="X6D-eD-Sez" secondAttribute="leadingMargin" id="HDZ-33-Dv2"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="jnr-aX-OSI" secondAttribute="trailing" id="NK4-c4-vte"/>
                                         <constraint firstItem="23H-O9-J8y" firstAttribute="centerX" secondItem="X6D-eD-Sez" secondAttribute="centerX" id="Y0i-Jj-8tS"/>
                                         <constraint firstItem="jnr-aX-OSI" firstAttribute="top" secondItem="01t-aO-Mpc" secondAttribute="bottom" constant="8" id="YwQ-dK-xJR"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="23H-O9-J8y" secondAttribute="bottom" id="eUo-nu-4OG"/>
                                         <constraint firstItem="01t-aO-Mpc" firstAttribute="leading" secondItem="k5X-Od-KHu" secondAttribute="trailing" constant="8" id="eyV-fn-iIC"/>
                                         <constraint firstItem="jnr-aX-OSI" firstAttribute="leading" secondItem="k5X-Od-KHu" secondAttribute="trailing" constant="8" id="lgz-IT-fjE"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="01t-aO-Mpc" secondAttribute="trailing" id="sQG-SY-Cc1"/>
                                         <constraint firstItem="k5X-Od-KHu" firstAttribute="top" secondItem="X6D-eD-Sez" secondAttribute="topMargin" id="v3n-Cj-HbI"/>
                                     </constraints>
                                 </tableViewCellContentView>
