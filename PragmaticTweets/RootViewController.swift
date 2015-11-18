@@ -14,7 +14,7 @@ import Social
 let defaultAvatarUrl = NSURL(string:
     "https://abs.twimg.com/sticky/default_profile_images/default_profile_0_200x200.png")
 
-class ViewController: UITableViewController {
+class RootViewController: UITableViewController {
     
     var parsedTweets: [ParsedTweet] = []
 
@@ -35,36 +35,17 @@ class ViewController: UITableViewController {
     }
     
     func reloadTweets() {
-        let accountStore = ACAccountStore()
-        let twitterAccountType = accountStore.accountTypeWithAccountTypeIdentifier(
-            ACAccountTypeIdentifierTwitter)
-        accountStore.requestAccessToAccountsWithType(twitterAccountType, options: nil,
-            completion: {
-                (granted: Bool, error: NSError!) -> Void in
-                guard granted else {
-                    NSLog("Account access not granted")
-                    return
-                }
-                let twitterAccounts = accountStore.accountsWithAccountType(twitterAccountType)
-                guard twitterAccounts.count > 0 else {
-                    NSLog("no twitter accounts configured")
-                    return
-                }
-                let twitterParams = [
-                    "count": "100"
-                ]
-                let twitterAPIUrl = NSURL(string:
-                    "https://api.twitter.com/1.1/statuses/home_timeline.json")
-                let request = SLRequest(forServiceType: SLServiceTypeTwitter,
-                    requestMethod: .GET,
-                    URL: twitterAPIUrl,
-                    parameters: twitterParams)
-                request.account = twitterAccounts.first as! ACAccount
-                request.performRequestWithHandler({
-                    (data: NSData!, urlResponse: NSHTTPURLResponse!, error: NSError!) -> Void in
-                    self.handleTwitterData(data, urlResponse: urlResponse, error: error)
-                })
+        let twitterParams = ["count": "100"]
+        guard let twitterAPIURL = NSURL(string:
+            "https://api.twitter.com/1.1/statuses/home_timeline.json") else {
+                return
+        }
+        sendTwitterRequest(twitterAPIURL,
+            params: twitterParams,
+            completion: { (data, urlResponse, error) -> Void in
+            self.handleTwitterData(data, urlResponse: urlResponse, error: error)
         })
+        
     }
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
