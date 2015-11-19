@@ -39,14 +39,19 @@ class RootViewController: UITableViewController, UISplitViewControllerDelegate {
             contentMode: .AspectFit,
             options: requestOptions,
             resultHandler: { (image: UIImage?, info: [NSObject: AnyObject]?) -> Void in
-            if let image = image
-                where SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
-                    let tweetVC = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
-                    tweetVC.setInitialText("Here's a photo I tweeted!. #pragsios9")
-                    tweetVC.addImage(image)
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.presentViewController(tweetVC, animated: true, completion: nil)
-                    })
+                if let image = image, var ciImage = CIImage(image: image)
+                    where SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
+                    ciImage = ciImage.imageByApplyingFilter("CIPixellate",
+                        withInputParameters: ["inputScale": 25.0])
+                        let ciContext = CIContext(options: nil)
+                        let cgImage = ciContext.createCGImage(ciImage, fromRect: ciImage.extent)
+                        let tweetImage = UIImage(CGImage: cgImage)
+                        let tweetVC = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+                        tweetVC.setInitialText("Here's a photo I tweeted! #pragsios9")
+                        tweetVC.addImage(tweetImage)
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            self.presentViewController(tweetVC, animated: true, completion: nil)
+                })
                 
             }
         })
