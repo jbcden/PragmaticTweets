@@ -7,14 +7,50 @@
 //
 
 import UIKit
-import Accounts
 import Social
-
+import Photos
+import CoreImage
 
 let defaultAvatarUrl = NSURL(string:
     "https://abs.twimg.com/sticky/default_profile_images/default_profile_0_200x200.png")
 
-class RootViewController: UITableViewController {
+class RootViewController: UITableViewController, UISplitViewControllerDelegate {
+    @IBAction func handlePhotoButtonTapped(sender: AnyObject) {
+        let fetchOptions = PHFetchOptions()
+        PHPhotoLibrary.requestAuthorization({
+            (authorized: PHAuthorizationStatus) -> Void in
+            if authorized == .Authorized {
+                fetchOptions.sortDescriptors =
+                    [NSSortDescriptor (key: "creationDate", ascending: false)]
+                let fetchResult = PHAsset.fetchAssetsWithMediaType(.Image,
+                    options: fetchOptions)
+                if let firstPhoto = fetchResult.firstObject as? PHAsset {
+                    self.createTweetForAsset(firstPhoto)
+                }
+            }
+        })
+    }
+    
+    func createTweetForAsset(asset: PHAsset) {
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.synchronous = true
+        PHImageManager.defaultManager().requestImageForAsset(asset,
+            targetSize: CGSize(width: 640.0, height: 480.0),
+            contentMode: .AspectFit,
+            options: requestOptions,
+            resultHandler: { (image: UIImage?, info: [NSObject: AnyObject]?) -> Void in
+            if let image = image
+                where SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
+                    let tweetVC = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+                    tweetVC.setInitialText("Here's a photo I tweeted!. #pragsios9")
+                    tweetVC.addImage(image)
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.presentViewController(tweetVC, animated: true, completion: nil)
+                    })
+                
+            }
+        })
+    }
     
     var parsedTweets: [ParsedTweet] = []
 
@@ -26,12 +62,39 @@ class RootViewController: UITableViewController {
             action: "handleRefresh:",
             forControlEvents: .ValueChanged)
         refreshControl = refresher
-        // Do any additional setup after loading the view, typically from a nib.
+        if let splitViewController = splitViewController {
+            splitViewController.delegate = self
+        }
+    }
+    
+    func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController, ontoPrimaryViewController primaryViewController: UIViewController) -> Bool {
+        return true
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "showTweetDetailsSegue" {
+            if let row = tableView?.indexPathForSelectedRow?.row,
+            tweetDetailVC = segue.destinationViewController
+                as? TweetDetailViewController {
+                let parsedTweet = parsedTweets[row]
+                tweetDetailVC.tweetIdString = parsedTweet.tweetIdString
+            }
+        }
     }
     
     @IBAction func handleRefresh(sender: AnyObject?) {
         reloadTweets()
         refreshControl?.endRefreshing()
+    }
+    
+    @IBAction func handleTweetButtonTapped(sender: AnyObject) {
+        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter) {
+            let tweetVC = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+            tweetVC.setInitialText("I just finished the first project in iOS 9 SDK Development. #pragsios9")
+            self.presentViewController(tweetVC, animated: true, completion: nil)
+        } else {
+            NSLog("Can't send a tweet")
+        }
     }
     
     func reloadTweets() {
@@ -77,6 +140,27 @@ class RootViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let parsedTweet = parsedTweets[indexPath.row]
+        if let splitViewController = splitViewController
+            where splitViewController.viewControllers.count > 1 {
+                if let tweetDetailNav = splitViewController.viewControllers[1]
+                    as? UINavigationController,
+                    tweetDetailVC = tweetDetailNav.viewControllers[0]
+                        as? TweetDetailViewController {
+                            tweetDetailVC.tweetIdString = parsedTweet.tweetIdString
+                }
+        } else {
+            if let storyboard = storyboard,
+                detailVC = storyboard.instantiateViewControllerWithIdentifier("TweetDetailVC")
+                    as? TweetDetailViewController {
+                        detailVC.tweetIdString = parsedTweet.tweetIdString
+                        splitViewController?.showDetailViewController(detailVC, sender: self)
+            }
+        }
+        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+    }
+    
     private func handleTwitterData(data: NSData!,
         urlResponse: NSHTTPURLResponse!,
         error: NSError!) {
@@ -97,6 +181,7 @@ class RootViewController: UITableViewController {
                     var parsedTweet = ParsedTweet()
                     parsedTweet.tweetText = tweetDict["text"] as? String
                     parsedTweet.createdAt = tweetDict["created_at"] as? String
+                    parsedTweet.tweetIdString = tweetDict["id_str"] as? String
                     if let userDict = tweetDict["user"] as? [String: AnyObject] {
                         parsedTweet.userName = userDict["name"] as? String
                         if let avatarString = userDict["profile_image_url"] as? String {

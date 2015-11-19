@@ -12,5 +12,6 @@ struct ParsedTweet {
     var tweetText: String?
     var userName: String?
     var createdAt: String?
+    var tweetIdString: String?
     var userAvatarUrl: NSURL?
 }
