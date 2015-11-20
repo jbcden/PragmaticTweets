@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PragmaticTweetsFramework
 
 class TweetDetailViewController: UIViewController {
     @IBOutlet weak var userImageButton: UIButton!

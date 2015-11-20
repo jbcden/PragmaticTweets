@@ -10,6 +10,7 @@ import UIKit
 import Social
 import Photos
 import CoreImage
+import PragmaticTweetsFramework
 
 let defaultAvatarUrl = NSURL(string:
     "https://abs.twimg.com/sticky/default_profile_images/default_profile_0_200x200.png")

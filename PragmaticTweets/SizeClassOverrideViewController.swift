@@ -10,10 +10,19 @@ import UIKit
 
 class SizeClassOverrideViewController: UIViewController {
     var embeddedSplitVC: UISplitViewController!
+    var screenNameForOpenURL: String?
+    
+    @IBAction func unwindToSizeClassOverrideVC(segue: UIStoryboardSegue) {
+    }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "embedSplitViewSegue" {
             embeddedSplitVC = segue.destinationViewController as! UISplitViewController
+        } else if segue.identifier == "ShowUserFromURLSegue" {
+            if let userDetailVC = segue.destinationViewController
+                as? UserDetailViewController {
+                    userDetailVC.screenName = screenNameForOpenURL
+            }
         }
     }
     
