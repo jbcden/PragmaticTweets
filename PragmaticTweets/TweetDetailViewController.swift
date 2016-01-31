@@ -53,7 +53,6 @@ class TweetDetailViewController: UIViewController {
                     NSLog("handleTwitterData() didn't get an array")
                     return
                 }
-//                NSLog("tweetDict: \(tweetDict)")
                 self.tweetTextLabel.text = tweetDict["text"] as? String
                 if let userDict = tweetDict["user"] as? [String: AnyObject] {
                     self.userRealNameLabel.text = (userDict["name"] as! String)
